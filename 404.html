@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title data-i18n="e404Title">404 · 页面找不到</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config={theme:{extend:{colors:{warm:{bg:'#fff7f2',card:'#ffeede',primary:'#e88c78',text:'#6b4842'}}}}}
+</script>
+<style>
+body {
+  min-height: 100vh;
+  background-color: #fff4ef;
+  background-image:
+    radial-gradient(1100px 550px at 12% -8%, rgba(255, 201, 176, 0.55) 0%, transparent 55%),
+    radial-gradient(1000px 520px at 108% 15%, rgba(255, 186, 213, 0.45) 0%, transparent 55%),
+    radial-gradient(950px 600px at 50% 118%, rgba(255, 224, 160, 0.5) 0%, transparent 50%);
+  background-attachment: fixed;
+}
+/* 语言选择器 */
+.lang-btn {
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  color: #6b4842;
+  font-size: 0.875rem;
+  transition: 0.2s;
+}
+.lang-btn:hover { color: #e88c78; }
+.lang-btn.active {
+  font-weight: 600;
+  text-decoration: underline;
+  color: #e88c78;
+}
+</style>
+</head>
+<body class="font-soft min-h-screen flex flex-col items-center justify-center px-4 text-warm-text">
+<div class="text-center bg-warm-card rounded-2xl p-8 shadow-lg">
+  <h1 class="text-4xl font-bold text-warm-primary mb-4">404</h1>
+  <p class="mb-4" data-i18n="e404Msg">页面不存在，或许链接出错啦</p>
+  <a href="./index.html" class="inline-block px-4 py-2 bg-warm-primary text-white rounded-xl" data-i18n="e404Back">回到首页</a>
+</div>
+<div class="flex justify-center gap-3 mt-6 text-sm opacity-70">
+  <button class="lang-btn" data-lang="zh">中文</button>
+  <button class="lang-btn" data-lang="zh-TW">繁體中文</button>
+  <button class="lang-btn" data-lang="en">English</button>
+  <button class="lang-btn" data-lang="ja">日本語</button>
+</div>
+<script src="./i18n.js"></script>
+</body>
+</html>

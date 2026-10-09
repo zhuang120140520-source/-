@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title data-i18n="aboutPageTitle">周末游玩预约 · 关于</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            warm: {
+              bg: '#fff7f2',
+              card: '#ffeede',
+              primary: '#e88c78',
+              text: '#6b4842'
+            }
+          },
+          fontFamily: { soft: ['system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      min-height: 100vh;
+      background-color: #fff4ef;
+      background-image:
+        radial-gradient(1100px 550px at 12% -8%, rgba(255, 201, 176, 0.55) 0%, transparent 55%),
+        radial-gradient(1000px 520px at 108% 15%, rgba(255, 186, 213, 0.45) 0%, transparent 55%),
+        radial-gradient(950px 600px at 50% 118%, rgba(255, 224, 160, 0.5) 0%, transparent 50%);
+      background-attachment: fixed;
+    }
+    .nav-link{ transition:0.2s; }
+    .nav-link:hover{ color:#e88c78; }
+    /* 语言选择器 */
+    .lang-btn {
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      color: #6b4842;
+      font-size: 0.875rem;
+      transition: 0.2s;
+    }
+    .lang-btn:hover { color: #e88c78; }
+    .lang-btn.active {
+      font-weight: 600;
+      text-decoration: underline;
+      color: #e88c78;
+    }
+  </style>
+</head>
+<body class="font-soft min-h-screen px-4 py-4 text-warm-text">
+<div class="max-w-xl mx-auto">
+  <nav class="flex justify-center gap-6 mb-8 text-base">
+    <a href="./index.html" class="nav-link" data-i18n="navHome">首页</a>
+    <a href="./guide.html" class="nav-link" data-i18n="navGuide">使用指南</a>
+    <a href="./about.html" class="nav-link font-medium" data-i18n="navAbout">关于</a>
+  </nav>
+
+  <div class="text-center mb-8">
+    <h1 class="text-[clamp(1.6rem,4vw,2rem)] font-semibold mb-2"><span data-i18n="aboutH1">关于周末游玩预约</span></h1>
+  </div>
+
+  <div class="bg-warm-card rounded-2xl p-6 shadow-lg space-y-4">
+    <p data-i18n="aboutP1">周末游玩预约是一个简单的网页工具，用来快速整理周末出游清单。</p>
+    <p data-i18n="aboutP2">可以和朋友、家人一起商量时间、活动、用餐和地点。填写内容在当前浏览器页面中处理，不会上传。</p>
+    <hr class="border-warm-primary/30">
+    <p data-i18n="aboutGit">项目开源托管于 GitHub Pages。</p>
+    <p data-i18n="aboutName">选好时间和地点，把周末安排得轻松一点。</p>
+  </div>
+
+  <!-- 页脚：语言选择 -->
+  <div class="text-center mt-6 text-sm opacity-70">
+    <div class="flex justify-center gap-3 mb-2">
+      <button class="lang-btn" data-lang="zh">中文</button>
+      <button class="lang-btn" data-lang="zh-TW">繁體中文</button>
+      <button class="lang-btn" data-lang="en">English</button>
+      <button class="lang-btn" data-lang="ja">日本語</button>
+    </div>
+    <a href="./index.html" class="underline block" data-i18n="backLink">← 返回首页</a>
+  </div>
+</div>
+<script src="./i18n.js"></script>
+</body>
+</html>

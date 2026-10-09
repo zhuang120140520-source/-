@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title data-i18n="pageTitle">周末游玩预约</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            warm: {
+              bg: '#fff7f2',
+              card: '#ffeede',
+              primary: '#e88c78',
+              text: '#6b4842'
+            }
+          },
+          fontFamily: {
+            soft: ['system-ui', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      min-height: 100vh;
+      background-color: #fff4ef;
+      background-image:
+        radial-gradient(1100px 550px at 12% -8%, rgba(255, 201, 176, 0.55) 0%, transparent 55%),
+        radial-gradient(1000px 520px at 108% 15%, rgba(255, 186, 213, 0.45) 0%, transparent 55%),
+        radial-gradient(950px 600px at 50% 118%, rgba(255, 224, 160, 0.5) 0%, transparent 50%);
+      background-attachment: fixed;
+    }
+    .tag-item.active {
+      background-color: #e88c78;
+      color: white;
+    }
+    .tag-item {
+      transition: all 0.2s ease;
+    }
+    .nav-link{
+      transition: 0.2s;
+    }
+    .nav-link:hover{
+      color:#e88c78;
+    }
+    /* 语言选择器 */
+    .lang-btn {
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      color: #6b4842;
+      font-size: 0.875rem;
+      transition: 0.2s;
+    }
+    .lang-btn:hover {
+      color: #e88c78;
+    }
+    .lang-btn.active {
+      font-weight: 600;
+      text-decoration: underline;
+      color: #e88c78;
+    }
+    /* 向导步骤 */
+    .step {
+      display: none;
+    }
+    .step.active {
+      display: block;
+    }
+    .progress-dot {
+      width: 1.75rem;
+      height: 1.75rem;
+      border-radius: 9999px;
+      border: 2px solid #e88c78;
+      color: #e88c78;
+      background: transparent;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+    .progress-dot.active {
+      background-color: #e88c78;
+      border-color: #e88c78;
+      color: white;
+    }
+    .progress-line {
+      flex: 1;
+      height: 2px;
+      background: rgba(232, 140, 120, 0.4);
+    }
+    [hidden] { display: none !important; }
+    button, input, textarea { font: inherit; }
+    input, textarea, .flex-1 { min-width: 0; }
+    .time-fields { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: .75rem; align-items: center; }
+    .meal-options { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+    .meal-option { border: 1px solid rgba(232, 140, 120, .5); border-radius: .75rem; padding: .85rem .5rem; transition: .2s; }
+    .meal-option[aria-pressed="true"] { background: #e88c78; color: white; border-color: #e88c78; }
+    button:focus-visible, a:focus-visible { outline: 2px solid #6b4842; outline-offset: 3px; }
+    #resultBox { height: 18rem; }
+    @media (max-width: 480px) {
+      .time-fields { grid-template-columns: minmax(0, 1fr); }
+      .time-divider { display: none; }
+    }
+  </style>
+</head>
+<body class="font-soft min-h-screen px-4 py-4 text-warm-text">
+  <div class="max-w-xl mx-auto">
+    <!-- 导航栏 -->
+    <nav class="flex justify-center gap-6 mb-8 text-base">
+      <a href="./index.html" class="nav-link font-medium" data-i18n="navHome">首页</a>
+      <a href="./guide.html" class="nav-link" data-i18n="navGuide">使用指南</a>
+      <a href="./about.html" class="nav-link" data-i18n="navAbout">关于</a>
+    </nav>
+
+    <!-- header -->
+    <div class="text-center mb-8">
+      <h1 class="text-[clamp(1.8rem,4vw,2.4rem)] font-semibold mb-2" data-i18n="brand">周末游玩预约</h1>
+      <p class="opacity-80" data-i18n="subtitle">周末去哪里玩？</p>
+    </div>
+
+    <div class="bg-warm-card rounded-2xl p-6 shadow-lg">
+      <!-- 步骤指示器 -->
+      <div id="stepLabel" class="text-center text-sm opacity-70 mb-2">第 1 / 4 步</div>
+      <div id="progressWrap" class="flex items-center gap-2 mb-6">
+        <button class="progress-dot active" data-step="1" title="游玩时间段" data-i18n-title="dotTime">1</button>
+        <div class="progress-line"></div>
+        <button class="progress-dot" data-step="2" title="打算做什么" data-i18n-title="dotActivity">2</button>
+        <div class="progress-line"></div>
+        <button class="progress-dot" data-step="3" title="用餐安排" data-i18n-title="dotFood">3</button>
+        <div class="progress-line"></div>
+        <button class="progress-dot" data-step="4" title="你想去哪里" data-i18n-title="dotTravel">4</button>
+
+      </div>
+
+      <!-- 第 1 步：时间段 -->
+      <section class="step active" data-step="1">
+        <h3 class="font-medium mb-3 flex items-center gap-2">
+          <i class="fa fa-clock-o"></i><span data-i18n="s1Title">游玩时间段</span>
+        </h3>
+        <div class="time-fields">
+          <div>
+            <label for="timeStart" class="text-sm opacity-80" data-i18n="startLabel">开始</label>
+            <input type="datetime-local" id="timeStart" class="mt-1 block border border-warm-primary/40 rounded-lg px-3 py-2 outline-none focus:ring-2 ring-warm-primary/50 bg-white w-full">
+          </div>
+          <span class="time-divider pt-6" aria-hidden="true">～</span>
+          <div>
+            <label for="timeEnd" class="text-sm opacity-80" data-i18n="endLabel">结束</label>
+            <input type="datetime-local" id="timeEnd" class="mt-1 block border border-warm-primary/40 rounded-lg px-3 py-2 outline-none focus:ring-2 ring-warm-primary/50 bg-white w-full">
+          </div>
+        </div>
+        <p id="timeError" class="text-sm mt-3 hidden" role="alert" data-i18n="timeInvalid">结束时间不能早于开始时间。</p>
+        <button id="skipWeekBtn" type="button" class="w-full mt-4 border border-warm-primary text-warm-text rounded-xl py-2.5 hover:bg-warm-primary/10 transition" data-i18n="skipWeek">这周算了</button>
+      </section>
+
+      <!-- 第 2 步：做什么 -->
+      <section class="step" data-step="2">
+        <h3 class="font-medium mb-3 flex items-center gap-2">
+          <i class="fa fa-gamepad"></i><span data-i18n="s2Title">打算做什么（可多选）</span>
+        </h3>
+        <div id="activityWrap" class="flex flex-wrap gap-2 mb-3">
+          <button type="button" aria-pressed="false" class="tag-item px-3 py-1.5 rounded-full border border-warm-primary/50 cursor-pointer select-none" data-i18n="act1">🎬 看电影</button>
+          <button type="button" aria-pressed="false" class="tag-item px-3 py-1.5 rounded-full border border-warm-primary/50 cursor-pointer select-none" data-i18n="act2">🌳 散步逛公园</button>
+          <button type="button" aria-pressed="false" class="tag-item px-3 py-1.5 rounded-full border border-warm-primary/50 cursor-pointer select-none" data-i18n="act3">📸 探店打卡</button>
+          <button type="button" aria-pressed="false" class="tag-item px-3 py-1.5 rounded-full border border-warm-primary/50 cursor-pointer select-none" data-i18n="act4">🖼️ 看展</button>
+          <button type="button" aria-pressed="false" class="tag-item px-3 py-1.5 rounded-full border border-warm-primary/50 cursor-pointer select-none" data-i18n="act5">🎤 KTV</button>
+          <button type="button" aria-pressed="false" class="tag-item px-3 py-1.5 rounded-full border border-warm-primary/50 cursor-pointer select-none" data-i18n="act6">⚽ 运动游玩</button>
+          <button type="button" aria-pressed="false" class="tag-item px-3 py-1.5 rounded-full border border-warm-primary/50 cursor-pointer select-none" data-i18n="act7">🎮 打游戏</button>
+          <button type="button" aria-pressed="false" class="tag-item px-3 py-1.5 rounded-full border border-warm-primary/50 cursor-pointer select-none" data-i18n="act8">🛍️ 逛街购物</button>
+          <button type="button" aria-pressed="false" class="tag-item px-3 py-1.5 rounded-full border border-warm-primary/50 cursor-pointer select-none" data-i18n="act9">🧶 手工DIY</button>
+          <button type="button" aria-pressed="false" class="tag-item px-3 py-1.5 rounded-full border border-warm-primary/50 cursor-pointer select-none" data-i18n="act10">♨️ 泡温泉</button>
+          <button type="button" aria-pressed="false" class="tag-item px-3 py-1.5 rounded-full border border-warm-primary/50 cursor-pointer select-none" data-i18n="act11">🏕️ 露营</button>
+          <button type="button" aria-pressed="false" class="tag-item px-3 py-1.5 rounded-full border border-warm-primary/50 cursor-pointer select-none" data-i18n="act12">🎶 看演出</button>
+          <button type="button" aria-pressed="false" class="tag-item px-3 py-1.5 rounded-full border border-warm-primary/50 cursor-pointer select-none" data-i18n="act13">🏔️ 爬山</button>
+          <button type="button" aria-pressed="false" class="tag-item px-3 py-1.5 rounded-full border border-warm-primary/50 cursor-pointer select-none" data-i18n="act14">📷 街拍</button>
+        </div>
+        <div class="flex gap-2">
+          <input id="activityOther" type="text" placeholder="其他活动，输入后点确定或回车添加" data-i18n-ph="actPh" class="flex-1 border border-warm-primary/40 rounded-lg px-3 py-2 bg-white outline-none">
+          <button id="activityAddBtn" type="button" class="px-4 border border-warm-primary text-warm-primary rounded-lg py-2 hover:bg-warm-primary/10 transition" data-i18n="confirm">确定</button>
+        </div>
+      </section>
+
+      <!-- 第 3 步：先选用餐，再进入吃什么 -->
+      <section class="step" data-step="3">
+        <div id="mealChoiceView">
+          <h3 class="font-medium mb-2 flex items-center gap-2"><i class="fa fa-cutlery" aria-hidden="true"></i><span data-i18n="s3Title">吃中午饭或者晚饭吗？</span></h3>
+          <p class="text-sm opacity-70 mb-4" data-i18n="mealHint">先选用餐安排，再选想吃的。</p>
+          <div class="meal-options" role="group" aria-labelledby="mealQuestion">
+            <span id="mealQuestion" class="sr-only" data-i18n="s3Title">吃中午饭或者晚饭吗？</span>
+            <button type="button" class="meal-option" data-meal="lunch" data-i18n="mealLunch" aria-pressed="false">吃中午饭</button>
+            <button type="button" class="meal-option" data-meal="dinner" data-i18n="mealDinner" aria-pressed="false">吃晚饭</button>
+            <button type="button" class="meal-option" data-meal="both" data-i18n="mealBoth" aria-pressed="false">午饭和晚饭都吃</button>
+            <button type="button" class="meal-option" data-meal="none" data-i18n="mealNone" aria-pressed="false">不吃饭，直接去玩</button>
+          </div>
+          <p id="mealError" class="text-sm mt-3 hidden" role="alert" data-i18n="mealRequired">请选择用餐安排。</p>
+        </div>
+        <div id="foodChoiceView" hidden>
+          <p class="text-sm opacity-70 mb-2" id="mealSummary"></p>
+          <h3 class="font-medium mb-3 flex items-center gap-2">
+          <i class="fa fa-cutlery"></i><span data-i18n="foodTitle">吃什么（可多选）</span>
+        </h3>
+        <div id="foodWrap" class="flex flex-wrap gap-2 mb-3">
+          <button type="button" aria-pressed="false" class="tag-item px-3 py-1.5 rounded-full border border-warm-primary/50 cursor-pointer select-none" data-i18n="food1">🍲 火锅</button>
+          <button type="button" aria-pressed="false" class="tag-item px-3 py-1.5 rounded-full border border-warm-primary/50 cursor-pointer select-none" data-i18n="food2">🍖 烤肉</button>
+          <button type="button" aria-pressed="false" class="tag-item px-3 py-1.5 rounded-full border border-warm-primary/50 cursor-pointer select-none" data-i18n="food3">🍝 西餐</button>
+          <button type="button" aria-pressed="false" class="tag-item px-3 py-1.5 rounded-full border border-warm-primary/50 cursor-pointer select-none" data-i18n="food4">🍢 小吃夜市</button>
+          <button type="button" aria-pressed="false" class="tag-item px-3 py-1.5 rounded-full border border-warm-primary/50 cursor-pointer select-none" data-i18n="food5">🧋 奶茶甜品</button>
+          <button type="button" aria-pressed="false" class="tag-item px-3 py-1.5 rounded-full border border-warm-primary/50 cursor-pointer select-none" data-i18n="food6">🥗 简餐轻食</button>
+          <button type="button" aria-pressed="false" class="tag-item px-3 py-1.5 rounded-full border border-warm-primary/50 cursor-pointer select-none" data-i18n="food7">🌶️ 川菜</button>
+          <button type="button" aria-pressed="false" class="tag-item px-3 py-1.5 rounded-full border border-warm-primary/50 cursor-pointer select-none" data-i18n="food8">🍣 日料</button>
+          <button type="button" aria-pressed="false" class="tag-item px-3 py-1.5 rounded-full border border-warm-primary/50 cursor-pointer select-none" data-i18n="food9">🍗 韩式炸鸡</button>
+          <button type="button" aria-pressed="false" class="tag-item px-3 py-1.5 rounded-full border border-warm-primary/50 cursor-pointer select-none" data-i18n="food10">🦞 小龙虾</button>
+          <button type="button" aria-pressed="false" class="tag-item px-3 py-1.5 rounded-full border border-warm-primary/50 cursor-pointer select-none" data-i18n="food11">☕ 咖啡小坐</button>
+          <button type="button" aria-pressed="false" class="tag-item px-3 py-1.5 rounded-full border border-warm-primary/50 cursor-pointer select-none" data-i18n="food12">🍜 面馆</button>
+          <button type="button" aria-pressed="false" class="tag-item px-3 py-1.5 rounded-full border border-warm-primary/50 cursor-pointer select-none" data-i18n="food13">🦐 海鲜大餐</button>
+          <button type="button" aria-pressed="false" class="tag-item px-3 py-1.5 rounded-full border border-warm-primary/50 cursor-pointer select-none" data-i18n="food14">🥟 早茶点心</button>
+        </div>
+        <div class="flex gap-2">
+          <input id="foodOther" type="text" placeholder="其他美食，输入后点确定或回车添加" data-i18n-ph="foodPh" class="flex-1 border border-warm-primary/40 rounded-lg px-3 py-2 bg-white outline-none">
+          <button id="foodAddBtn" type="button" class="px-4 border border-warm-primary text-warm-primary rounded-lg py-2 hover:bg-warm-primary/10 transition" data-i18n="confirm">确定</button>
+        </div>
+        </div>
+      </section>
+
+      <!-- 第 4 步：你想去哪里 -->
+      <section class="step" data-step="4">
+        <h3 class="font-medium mb-3 flex items-center gap-2">
+          <i class="fa fa-map-marker"></i><span data-i18n="s4Title">你想去哪里</span>
+        </h3>
+        <div class="flex gap-3 mb-4">
+          <label class="inline-flex items-center gap-1.5 cursor-pointer">
+            <input type="radio" name="cityType" value="singapore" checked class="accent-warm-primary">
+            <span data-i18n="radioSingapore">新加坡</span>
+          </label>
+          <label class="inline-flex items-center gap-1.5 cursor-pointer">
+            <input type="radio" name="cityType" value="abroad" class="accent-warm-primary">
+            <span data-i18n="radioAbroad">出国</span>
+          </label>
+        </div>
+        <div>
+          <label class="text-sm opacity-80" for="meetPlace" data-i18n="meetLabel">游玩地点</label>
+          <div class="flex gap-2 mt-1">
+            <input id="meetPlace" type="text" placeholder="输入想去的地方，如：万象城 / 人民公园" data-i18n-ph="meetPh" class="flex-1 border border-warm-primary/40 rounded-lg px-3 py-2 bg-white outline-none focus:ring-2 ring-warm-primary/50">
+            <button id="meetPlaceBtn" type="button" class="px-4 border border-warm-primary text-warm-primary rounded-lg py-2 hover:bg-warm-primary/10 transition" data-i18n="confirm">确定</button>
+          </div>
+          <p id="meetPlaceConfirm" class="text-sm mt-1.5 hidden"><span data-i18n="meetConfirmed">✅ 已确认：</span><span class="meet-value font-medium"></span></p>
+        </div>
+      </section>
+
+      <!-- 结果 -->
+      <section class="step" data-step="5">
+        <h3 class="font-medium mb-3 flex items-center gap-2">
+          <i class="fa fa-check-circle-o"></i><span data-i18n="resultTitle">周末游玩清单（可复制）</span>
+        </h3>
+        <textarea id="resultBox" readonly aria-label="周末游玩清单" class="w-full h-40 bg-white border border-warm-primary/30 rounded-xl p-3 resize-none outline-none"></textarea>
+        <div class="flex gap-3 pt-3">
+          <button id="copyBtn" class="flex-1 bg-warm-primary hover:bg-[#dd7c66] text-white rounded-xl py-2.5 transition" data-i18n="copyBtn">复制清单</button>
+          <button id="resetBtn" class="px-4 border border-warm-primary text-warm-primary rounded-xl py-2.5 hover:bg-warm-primary/10 transition" data-i18n="resetBtn">重新填写</button>
+        </div>
+      </section>
+
+      <!-- 导航按钮 -->
+      <div class="flex gap-3 pt-4">
+        <button id="prevBtn" style="display:none" class="px-4 border border-warm-primary text-warm-primary rounded-xl py-2.5 hover:bg-warm-primary/10 transition">← 上一项</button>
+        <button id="nextBtn" class="flex-1 bg-warm-primary hover:bg-[#dd7c66] text-white rounded-xl py-2.5 transition">下一项 →</button>
+      </div>
+    </div>
+
+    <!-- 页脚：语言选择 -->
+    <div class="text-center mt-6 text-sm opacity-70">
+      <div class="flex justify-center gap-3 mb-2">
+        <button class="lang-btn" data-lang="zh">中文</button>
+        <button class="lang-btn" data-lang="zh-TW">繁體中文</button>
+        <button class="lang-btn" data-lang="en">English</button>
+        <button class="lang-btn" data-lang="ja">日本語</button>
+      </div>
+      <div data-i18n="brand">周末游玩预约</div>
+    </div>
+  </div>
+
+  <script src="./i18n.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
